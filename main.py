@@ -1,32 +1,37 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import seaborn as sns
+# building an initial model
 
 import tensorflow as tf
+import datetime
+import numpy as np
+import matplotlib.pyplot as plt
 
-from tensorflow import keras
-from tensorflow.keras import layers
+# Create features (using tensors)
+X = tf.constant([-7.0, -4.0, -1.0, 2.0, 5.0, 8.0, 11.0, 14.0])
 
-# print(tf.__version__)
-# Setting Percision
-np.set_printoptions(precision=3, suppress=True)
+# Create labels (using tensors)
+y = tf.constant([3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0])
 
-url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data'
-column_names = ['MPG', 'Cylinders', 'Displacement', 'Horsepower', 'Weight',
-                'Acceleration', 'Model Year', 'Origin']
+# Visualize it
+plt.scatter(X, y)
 
-raw_dataset = pd.read_csv(url, names=column_names,
-                          na_values='?', comment='\t',
-                          sep=' ', skipinitialspace=True)
+# Set random seed
+tf.random.set_seed(42)
 
-dataset = raw_dataset.copy()
-dataset.tail()
-dataset = dataset.dropna()
+# Create a model using the Sequential API
+model = tf.keras.Sequential([
+  tf.keras.layers.Dense(1)
+])
 
-dataset['Origin'] = dataset['Origin'].map({1: 'USA', 2: 'Europe', 3: 'Japan'})
-dataset = pd.get_dummies(dataset, columns=['Origin'], prefix='', prefix_sep='')
-dataset.tail()
+# Compile the model
+model.compile(loss=tf.keras.losses.mae, # mae is short for mean absolute error
+              optimizer=tf.keras.optimizers.SGD(), # SGD is short for stochastic gradient descent
+              metrics=["mae"])
 
-train_dataset = dataset.sample(frac=0.8, random_state=0)
-test_dataset = dataset.drop(train_dataset.index)
+# Fit the model
+# model.fit(X, y, epochs=5) # this will break with TensorFlow 2.7.0+
+model.fit(tf.expand_dims(X, axis=-1), y, epochs=100)
+
+# Make a prediction with the model
+print(model.predict(tf.constant([17.0])))
+
+plt.show()
