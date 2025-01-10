@@ -1,4 +1,4 @@
-# model 1, shows how to analyze a model
+#more epochs
 
 import tensorflow as tf
 import datetime
@@ -29,6 +29,7 @@ tf.random.set_seed(42)
 
 # Create a model (same as above)
 model = tf.keras.Sequential([
+  tf.keras.layers.Dense(1, input_shape=[1]),
   tf.keras.layers.Dense(1, input_shape=[1])
 ])
 
@@ -38,7 +39,7 @@ model.compile(loss=tf.keras.losses.mae,
               metrics=["mae"])
 
 # Fit model (same as above)
-model.fit(X_train, y_train, epochs=100) # commented out on purpose (not fitting it just yet)
+model.fit(X_train, y_train, epochs=500) # commented out on purpose (not fitting it just yet)
 
 # Make predictions
 y_preds = model.predict(X_test)
@@ -70,7 +71,7 @@ plot_predictions(train_data=X_train,
 
 
 model.evaluate(X_test, y_test)
-# Calculate the mean absolute error
-mae = tf.keras.metrics.MeanAbsoluteError()
-mae.update_state(y_true=y_test, y_pred=y_preds)
-print(mae.result().numpy())
+# # Calculate the mean absolute error
+# mae = tf.keras.metrics.MeanAbsoluteError()
+# mae.update_state(y_true=y_test, y_pred=y_preds)
+# print(mae.result().numpy())
